@@ -1,178 +1,168 @@
-const express = require('express');
-const mongoose = require('mongoose');
-const bcrypt = require('bcryptjs');
-const jwt = require('jsonwebtoken');
-const cors = require('cors');
-const { MongoMemoryServer } = require('mongodb-memory-server');
-require('dotenv').config();
+const express = require("express");
+const mongoose = require("mongoose");
+const bcrypt = require("bcryptjs");
+const jwt = require("jsonwebtoken");
+const cors = require("cors");
+require("dotenv").config();
 
 const app = express();
 const PORT = process.env.PORT || 4000;
-const JWT_SECRET = process.env.JWT_SECRET || 'change-me';
-const allowedOrigins =
-  (process.env.CLIENT_ORIGINS || '')
-    .split(',')
-    .map((origin) => origin.trim())
-    .filter(Boolean);
+const JWT_SECRET = process.env.JWT_SECRET || "dev-secret-change-in-production";
 
-app.use(
-  cors({
-    origin: allowedOrigins.length ? allowedOrigins : '*',
-  })
-);
+// =======================
+// ✅ CORS CONFIGURATION
+// =======================
+app.use(cors({
+  origin: "*", // allow all during dev
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization"]
+}));
+
 app.use(express.json());
 
-mongoose.set('strictQuery', true);
+// =======================
+// ✅ CONNECT TO MONGODB ATLAS
+// =======================
+const connectDB = async () => {
+  try {
+    if (!process.env.MONGODB_URI) {
+      console.error("❌ MONGODB_URI is required. Please set it in your .env file");
+      process.exit(1);
+    }
+    await mongoose.connect(process.env.MONGODB_URI);
+    const dbName = mongoose.connection.db.databaseName;
+    console.log(`✅ Connected to MongoDB Atlas`);
+    console.log(`📦 Database: ${dbName}`);
+    console.log(`📋 Collection: users`);
+  } catch (err) {
+    console.error("❌ MongoDB connection failed:", err.message);
+    process.exit(1);
+  }
+};
 
+// =======================
+// ✅ USER SCHEMA
+// =======================
 const userSchema = new mongoose.Schema(
   {
-    name: { type: String, required: true, trim: true, minlength: 2, maxlength: 64 },
-    email: { type: String, required: true, trim: true, lowercase: true, unique: true },
-    password: { type: String, required: true },
+    name: { type: String, required: true },
+    email: { type: String, required: true, unique: true, lowercase: true },
+    password: { type: String, required: true }
   },
   { timestamps: true }
 );
 
-userSchema.methods.toJSON = function toJSON() {
+userSchema.methods.toJSON = function () {
   const obj = this.toObject();
   delete obj.password;
   return obj;
 };
 
-const User = mongoose.model('User', userSchema);
+const User = mongoose.model("User", userSchema);
 
-const createToken = (user) =>
-  jwt.sign({ userId: user._id, email: user.email }, JWT_SECRET, { expiresIn: '2h' });
+// =======================
+// ✅ JWT HELPERS
+// =======================
+const createToken = (user) => {
+  return jwt.sign(
+    { userId: user._id, email: user.email },
+    JWT_SECRET,
+    { expiresIn: "2h" }
+  );
+};
 
 const authenticateToken = async (req, res, next) => {
   try {
-    const authHeader = req.headers.authorization || '';
-    const token = authHeader.split(' ')[1];
-    if (!token) {
-      return res.status(401).json({ message: 'Missing authorization token' });
-    }
+    const token = req.headers.authorization?.split(" ")[1];
+    if (!token) return res.status(401).json({ message: "No token provided" });
+
     const decoded = jwt.verify(token, JWT_SECRET);
-    const user = await User.findById(decoded.userId).select('-password');
-    if (!user) {
-      return res.status(401).json({ message: 'User not found' });
-    }
+    const user = await User.findById(decoded.userId).select("-password");
+    if (!user) return res.status(401).json({ message: "User not found" });
+
     req.user = user;
     next();
-  } catch (error) {
-    return res.status(401).json({ message: 'Invalid or expired token' });
+  } catch (err) {
+    return res.status(401).json({ message: "Invalid or expired token" });
   }
 };
 
-app.post('/api/auth/signup', async (req, res, next) => {
+// =======================
+// ✅ AUTH ROUTES
+// =======================
+
+// ✅ SIGNUP
+app.post("/api/auth/signup", async (req, res) => {
   try {
     const { name, email, password } = req.body;
-    if (!name || !email || !password) {
-      return res.status(400).json({ message: 'Name, email, and password are required' });
-    }
 
-    const normalizedEmail = String(email).trim().toLowerCase();
-    const existingUser = await User.findOne({ email: normalizedEmail });
+    if (!name || !email || !password)
+      return res.status(400).json({ message: "All fields are required" });
 
-    if (existingUser) {
-      return res.status(409).json({ message: 'Account already exists. Please sign in.' });
-    }
+    const existingUser = await User.findOne({ email: email.toLowerCase() });
+    if (existingUser)
+      return res.status(409).json({ message: "User already exists" });
 
     const hashedPassword = await bcrypt.hash(password, 10);
-    const user = await User.create({
-      name: name.trim(),
-      email: normalizedEmail,
+
+    const newUser = await User.create({
+      name,
+      email: email.toLowerCase(),
       password: hashedPassword,
     });
 
-    const token = createToken(user);
-    return res.status(201).json({ token, user: user.toJSON() });
-  } catch (error) {
-    return next(error);
+    console.log(`✅ New user created: ${newUser.email} (ID: ${newUser._id})`);
+    const token = createToken(newUser);
+    res.status(201).json({ token, user: newUser.toJSON() });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Signup failed" });
   }
 });
 
-app.post('/api/auth/login', async (req, res, next) => {
+// ✅ LOGIN
+app.post("/api/auth/login", async (req, res) => {
   try {
     const { email, password } = req.body;
-    if (!email || !password) {
-      return res.status(400).json({ message: 'Email and password are required' });
-    }
 
-    const user = await User.findOne({ email: String(email).trim().toLowerCase() });
-    if (!user) {
-      return res.status(404).json({ message: 'Account not found. Please sign up first.' });
-    }
+    const user = await User.findOne({ email: email.toLowerCase() });
+    if (!user)
+      return res.status(404).json({ message: "User not found" });
 
-    const passwordMatch = await bcrypt.compare(password, user.password);
-    if (!passwordMatch) {
-      return res.status(401).json({ message: 'Invalid email or password' });
-    }
+    const match = await bcrypt.compare(password, user.password);
+    if (!match)
+      return res.status(401).json({ message: "Invalid credentials" });
 
     const token = createToken(user);
-    return res.json({ token, user: user.toJSON() });
-  } catch (error) {
-    return next(error);
+    res.json({ token, user: user.toJSON() });
+  } catch (err) {
+    res.status(500).json({ message: "Login failed" });
   }
 });
 
-app.get('/api/auth/me', authenticateToken, (req, res) => {
-  return res.json({ user: req.user });
+// ✅ GET CURRENT USER
+app.get("/api/auth/me", authenticateToken, (req, res) => {
+  res.json({ user: req.user });
 });
 
-app.post('/api/auth/logout', authenticateToken, (req, res) => {
-  return res.json({ message: 'Successfully logged out' });
+// ✅ LOGOUT
+app.post("/api/auth/logout", authenticateToken, (req, res) => {
+  res.json({ message: "Logged out successfully" });
 });
 
-app.use('/api', (req, res) => {
-  res.status(404).json({ message: 'Route not found' });
+// ✅ HEALTH CHECK
+app.get("/", (req, res) => {
+  res.json({ status: "OK", message: "Server Running" });
 });
 
-app.get('/', (_req, res) => {
-  res.json({ status: 'OK', message: 'Auth API is running' });
-});
-
-app.use((err, req, res, _next) => {
-  console.error(err);
-  res.status(500).json({ message: 'Something went wrong. Please try again later.' });
-});
-
-let inMemoryMongo = null;
-
-const resolveMongoUri = async () => {
-  if (process.env.MONGODB_URI) {
-    return process.env.MONGODB_URI;
-  }
-  if (!inMemoryMongo) {
-    inMemoryMongo = await MongoMemoryServer.create();
-    console.warn(
-      'MONGODB_URI not found. Booting temporary in-memory MongoDB instance for local use.'
-    );
-  }
-  return inMemoryMongo.getUri();
-};
-
+// =======================
+// ✅ START SERVER (AFTER MONGODB CONNECTS)
+// =======================
 const startServer = async () => {
-  try {
-    const mongoUri = await resolveMongoUri();
-    await mongoose.connect(mongoUri);
-    console.log('Connected to MongoDB');
-    app.listen(PORT, () => console.log(`Server listening on http://localhost:${PORT}`));
-  } catch (error) {
-    console.error('Failed to connect to MongoDB', error);
-    process.exit(1);
-  }
+  await connectDB();
+  app.listen(PORT, () => {
+    console.log(`✅ Server running on http://localhost:${PORT}`);
+  });
 };
 
 startServer();
-
-const gracefulShutdown = async () => {
-  await mongoose.connection.close();
-  if (inMemoryMongo) {
-    await inMemoryMongo.stop();
-  }
-  process.exit(0);
-};
-
-process.on('SIGINT', gracefulShutdown);
-process.on('SIGTERM', gracefulShutdown);
-
