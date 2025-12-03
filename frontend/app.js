@@ -1,6 +1,7 @@
 const API_BASE = window.API_BASE_URL || 'http://localhost:4000';
 const apiUrl = (path) => `${API_BASE}${path}`;
 const tokenKey = 'authToken';
+const roleKey = 'userRole';
 const loginSection = document.getElementById('loginSection');
 const signupSection = document.getElementById('signupSection');
 const successSection = document.getElementById('successSection');
@@ -39,7 +40,22 @@ const updateProfileDetails = (user) => {
     profileDetails.textContent = '';
     return;
   }
-  profileDetails.innerHTML = `<strong>Name:</strong> ${user.name}<br /><strong>Email:</strong> ${user.email}`;
+  const roleDisplay = user.role ? `<br /><strong>Role:</strong> ${user.role.charAt(0).toUpperCase() + user.role.slice(1)}` : '';
+  profileDetails.innerHTML = `<strong>Name:</strong> ${user.name}<br /><strong>Email:</strong> ${user.email}${roleDisplay}`;
+};
+
+const redirectToDashboard = (role) => {
+  const dashboards = {
+    patient: '/patient-dashboard.html',
+    doctor: '/doctor-dashboard.html',
+    admin: '/admin-dashboard.html'
+  };
+  
+  const dashboardPath = dashboards[role] || '/patient-dashboard.html';
+  
+  // For now, we'll show a message. In a real app, you'd navigate to the dashboard
+  // window.location.href = dashboardPath;
+  console.log(`Would redirect to: ${dashboardPath} for role: ${role}`);
 };
 
 const request = async (endpoint, payload, token) => {
@@ -94,7 +110,12 @@ const handleLoginSubmit = async (event) => {
     setLoading(loginForm, true);
     const data = await request('/api/auth/login', formData);
     localStorage.setItem(tokenKey, data.token);
+    localStorage.setItem(roleKey, data.user.role);
     updateProfileDetails(data.user);
+    
+    // Redirect based on role
+    redirectToDashboard(data.user.role);
+    
     toggleView('successSection');
   } catch (error) {
     setMessage(loginMessage, error.message);
@@ -114,11 +135,22 @@ const handleSignupSubmit = async (event) => {
   }
 
   delete formData.confirmPassword;
+  
+  // Role defaults to patient if not provided
+  if (!formData.role) {
+    formData.role = 'patient';
+  }
+  
   try {
     setLoading(signupForm, true);
     const data = await request('/api/auth/signup', formData);
     localStorage.setItem(tokenKey, data.token);
+    localStorage.setItem(roleKey, data.user.role);
     updateProfileDetails(data.user);
+    
+    // Redirect based on role
+    redirectToDashboard(data.user.role);
+    
     setMessage(signupMessage, 'Account created successfully!', 'success');
     toggleView('successSection');
   } catch (error) {
@@ -138,6 +170,7 @@ const handleLogout = async () => {
     }
   }
   localStorage.removeItem(tokenKey);
+  localStorage.removeItem(roleKey);
   updateProfileDetails(null);
   toggleView('loginSection');
 };
@@ -146,12 +179,17 @@ const hydrateSession = async () => {
   try {
     const user = await fetchProfile();
     if (user) {
+      // Store role if not already stored
+      if (user.role) {
+        localStorage.setItem(roleKey, user.role);
+      }
       updateProfileDetails(user);
       toggleView('successSection');
       return;
     }
   } catch (error) {
     localStorage.removeItem(tokenKey);
+    localStorage.removeItem(roleKey);
   }
   toggleView('loginSection');
 };
