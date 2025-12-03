@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import DashboardLayout from '../components/DashboardLayout';
+import heroImage from '../assets/medium-shot-scientists-posing-together.jpg';
 
 const PatientDashboard = () => {
   const navigate = useNavigate();
@@ -151,99 +152,190 @@ const PatientDashboard = () => {
 
   return (
     <DashboardLayout role="patient">
-      <div className="min-h-screen bg-[#f8fafc] pb-20 font-sans selection:bg-blue-100 selection:text-blue-900">
-        <div className="w-full max-w-[1400px] mx-auto px-6 lg:px-12 pt-8 space-y-16">
+      <div className="min-h-screen bg-[#f8fafc] pb-32 font-sans selection:bg-blue-100 selection:text-blue-900">
+        <div className="w-full max-w-[1400px] mx-auto px-8 lg:px-16 xl:px-20 pt-16 pb-12 space-y-32">
 
-          {/* Welcome Section - Minimalist & Elegant - Only show on main dashboard */}
+          {/* Hero Section - Full Image with Text Overlay */}
           {!showBooking && location.pathname === '/patient-dashboard' && (
-            <div className="relative animate-fade-in">
-              <div className="flex flex-col md:flex-row items-end justify-between gap-8 mb-12">
-                <div>
-                  <h1 className="text-5xl md:text-7xl font-heading font-bold tracking-tight text-slate-900 mb-4">
-                    Hello, <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600">{user.name.split(' ')[0]}</span>
-                  </h1>
-                  <p className="text-slate-500 text-xl font-light max-w-2xl leading-relaxed">
-                    Your health overview for this week. You have <span className="font-semibold text-slate-900">{appointments.filter(a => a.status === 'confirmed').length} upcoming</span> appointments.
-                  </p>
-                </div>
-                <button
-                  onClick={() => navigate('/patient-dashboard/book')}
-                  className="group relative px-8 py-4 bg-slate-900 text-white rounded-none font-medium text-sm tracking-wide overflow-hidden shadow-xl shadow-slate-200 hover:shadow-2xl hover:shadow-slate-300 hover:-translate-y-1 transition-all duration-300"
-                >
-                  <div className="absolute inset-0 w-full h-full bg-gradient-to-r from-blue-600 to-indigo-600 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                  <span className="relative flex items-center gap-3">
-                    Book Appointment
-                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>
-                  </span>
-                </button>
-              </div>
+            <div className="relative w-full mb-32 overflow-hidden">
+              {/* Full Image - Maintain Aspect Ratio */}
+              <img
+                src={heroImage}
+                alt="Healthcare professionals"
+                className="w-full h-auto object-cover object-center"
+                style={{ maxHeight: '70vh' }}
+              />
 
+              {/* Dark Overlay for Text Readability */}
+              <div className="absolute inset-0 bg-black/50"></div>
+
+              {/* Text and Buttons Overlay */}
+              <div className="absolute inset-0 flex flex-col items-center justify-center text-center px-6 lg:px-12">
+                <h1 className="text-4xl md:text-6xl font-heading font-bold text-white mb-6 tracking-tight drop-shadow-lg">
+                  Making Health Care Better Together
+                </h1>
+                <p className="text-xl md:text-2xl text-white/90 font-light mb-12 leading-relaxed max-w-2xl drop-shadow-md">
+                  Book and manage your appointments in seconds.
+                </p>
+                <div className="flex flex-col sm:flex-row gap-8">
+                  <button
+                    onClick={() => navigate('/patient-dashboard/book')}
+                    className="group relative px-10 py-5 bg-gradient-to-r from-white to-blue-50 text-blue-900 font-bold text-xl rounded-2xl shadow-2xl shadow-blue-500/20 hover:shadow-blue-500/40 hover:shadow-3xl hover:-translate-y-2 transition-all duration-500 overflow-hidden border-2 border-white/50 backdrop-blur-sm"
+                  >
+                    <div className="absolute inset-0 bg-gradient-to-r from-blue-500/0 to-purple-500/0 group-hover:from-blue-500/10 group-hover:to-purple-500/10 transition-all duration-500"></div>
+                    <span className="relative flex items-center gap-3">
+                      <svg className="w-6 h-6 group-hover:rotate-12 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                      </svg>
+                      Book Appointment
+                      <svg className="w-5 h-5 group-hover:translate-x-1 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                      </svg>
+                    </span>
+                  </button>
+                  <button
+                    onClick={() => navigate('/patient-dashboard/appointments')}
+                    className="group relative px-10 py-5 bg-transparent border-2 border-white/90 text-white font-bold text-xl rounded-2xl hover:bg-white hover:text-blue-900 hover:border-white hover:shadow-2xl hover:shadow-white/20 hover:-translate-y-2 transition-all duration-500 backdrop-blur-sm"
+                  >
+                    <div className="absolute inset-0 bg-gradient-to-r from-white/0 to-white/0 group-hover:from-white/95 group-hover:to-blue-50/95 transition-all duration-500 rounded-2xl"></div>
+                    <span className="relative flex items-center gap-3">
+                      <svg className="w-6 h-6 group-hover:scale-110 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+                      </svg>
+                      My Appointments
+                      <svg className="w-5 h-5 group-hover:translate-x-1 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                      </svg>
+                    </span>
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Dashboard Stats - Modern Interactive Cards */}
+          {!showBooking && location.pathname === '/patient-dashboard' && (
+            <div className="relative animate-fade-in-up mb-16">
               {/* Glass Cards Grid */}
               <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                {/* Card 1 */}
-                <div className="glass-panel p-8 rounded-none relative overflow-hidden group hover:-translate-y-2 transition-transform duration-500">
-                  <div className="absolute top-0 right-0 p-8 opacity-10 group-hover:opacity-20 transition-opacity duration-500">
-                    <svg className="w-32 h-32 text-blue-600" fill="currentColor" viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z" /></svg>
+                {/* Card 1 - Upcoming Visits */}
+                <div className="group relative bg-white/80 backdrop-blur-lg border border-white/20 rounded-2xl p-10 lg:p-12 shadow-xl hover:shadow-2xl hover:shadow-blue-500/10 hover:-translate-y-3 transition-all duration-500 overflow-hidden">
+                  {/* Animated Background Gradient */}
+                  <div className="absolute inset-0 bg-gradient-to-br from-blue-50 to-indigo-50 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+
+                  {/* Floating Icon */}
+                  <div className="absolute top-4 right-4 w-16 h-16 bg-blue-500/10 rounded-full flex items-center justify-center group-hover:scale-110 group-hover:rotate-12 transition-all duration-500">
+                    <svg className="w-8 h-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                    </svg>
                   </div>
+
+                  {/* Pulse Ring */}
+                  <div className="absolute top-6 right-6 w-12 h-12 border-2 border-blue-400/30 rounded-full animate-ping"></div>
+
                   <div className="relative z-10">
-                    <div className="w-12 h-12 rounded-none bg-blue-50 text-blue-600 flex items-center justify-center mb-6 shadow-sm">
-                      <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
+                    <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-blue-500 to-blue-600 text-white flex items-center justify-center mb-6 shadow-lg group-hover:shadow-blue-500/50 transition-shadow">
+                      <svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                      </svg>
                     </div>
-                    <h3 className="text-4xl font-heading font-bold text-slate-900 mb-2">{appointments.filter(a => a.status === 'confirmed').length}</h3>
-                    <p className="text-slate-500 font-medium tracking-wide uppercase text-xs">Upcoming Visits</p>
+                    <h3 className="text-5xl font-heading font-bold text-slate-900 mb-2 group-hover:text-blue-600 transition-colors">
+                      {appointments.filter(a => a.status === 'confirmed').length}
+                    </h3>
+                    <p className="text-slate-600 font-semibold tracking-wide uppercase text-sm group-hover:text-blue-500 transition-colors">Upcoming Visits</p>
                   </div>
                 </div>
 
-                {/* Card 2 */}
-                <div className="glass-panel p-8 rounded-none relative overflow-hidden group hover:-translate-y-2 transition-transform duration-500">
-                  <div className="absolute top-0 right-0 p-8 opacity-10 group-hover:opacity-20 transition-opacity duration-500">
-                    <svg className="w-32 h-32 text-emerald-600" fill="currentColor" viewBox="0 0 24 24"><path d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z" /></svg>
+                {/* Card 2 - Completed Visits */}
+                <div className="group relative bg-white/80 backdrop-blur-lg border border-white/20 rounded-2xl p-8 shadow-xl hover:shadow-2xl hover:shadow-emerald-500/10 hover:-translate-y-3 transition-all duration-500 overflow-hidden">
+                  {/* Animated Background Gradient */}
+                  <div className="absolute inset-0 bg-gradient-to-br from-emerald-50 to-green-50 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+
+                  {/* Floating Icon */}
+                  <div className="absolute top-4 right-4 w-16 h-16 bg-emerald-500/10 rounded-full flex items-center justify-center group-hover:scale-110 group-hover:rotate-12 transition-all duration-500">
+                    <svg className="w-8 h-8 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
                   </div>
+
+                  {/* Pulse Ring */}
+                  <div className="absolute top-6 right-6 w-12 h-12 border-2 border-emerald-400/30 rounded-full animate-ping" style={{animationDelay: '0.5s'}}></div>
+
                   <div className="relative z-10">
-                    <div className="w-12 h-12 rounded-none bg-emerald-50 text-emerald-600 flex items-center justify-center mb-6 shadow-sm">
-                      <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                    <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-emerald-500 to-emerald-600 text-white flex items-center justify-center mb-6 shadow-lg group-hover:shadow-emerald-500/50 transition-shadow">
+                      <svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                      </svg>
                     </div>
-                    <h3 className="text-4xl font-heading font-bold text-slate-900 mb-2">{appointments.filter(a => a.status === 'confirmed' && new Date(a.date) < new Date()).length}</h3>
-                    <p className="text-slate-500 font-medium tracking-wide uppercase text-xs">Completed Visits</p>
+                    <h3 className="text-5xl font-heading font-bold text-slate-900 mb-2 group-hover:text-emerald-600 transition-colors">
+                      {appointments.filter(a => a.status === 'confirmed' && new Date(a.date) < new Date()).length}
+                    </h3>
+                    <p className="text-slate-600 font-semibold tracking-wide uppercase text-sm group-hover:text-emerald-500 transition-colors">Completed Visits</p>
                   </div>
                 </div>
 
-                {/* Card 3 */}
-                <div className="glass-panel p-8 rounded-none relative overflow-hidden group hover:-translate-y-2 transition-transform duration-500">
-                  <div className="absolute top-0 right-0 p-8 opacity-10 group-hover:opacity-20 transition-opacity duration-500">
-                    <svg className="w-32 h-32 text-purple-600" fill="currentColor" viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z" /></svg>
+                {/* Card 3 - Total Meetings */}
+                <div className="group relative bg-white/80 backdrop-blur-lg border border-white/20 rounded-2xl p-8 shadow-xl hover:shadow-2xl hover:shadow-purple-500/10 hover:-translate-y-3 transition-all duration-500 overflow-hidden">
+                  {/* Animated Background Gradient */}
+                  <div className="absolute inset-0 bg-gradient-to-br from-purple-50 to-pink-50 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+
+                  {/* Floating Icon */}
+                  <div className="absolute top-6 right-6 w-16 h-16 bg-purple-500/10 rounded-full flex items-center justify-center group-hover:scale-110 group-hover:rotate-12 transition-all duration-500">
+                    <svg className="w-8 h-8 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                    </svg>
                   </div>
+
+                  {/* Pulse Ring */}
+                  <div className="absolute top-8 right-8 w-12 h-12 border-2 border-purple-400/30 rounded-full animate-ping" style={{animationDelay: '1s'}}></div>
+
                   <div className="relative z-10">
-                    <div className="w-12 h-12 rounded-none bg-purple-50 text-purple-600 flex items-center justify-center mb-6 shadow-sm">
-                      <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" /></svg>
+                    <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-purple-500 to-purple-600 text-white flex items-center justify-center mb-8 shadow-lg group-hover:shadow-purple-500/50 transition-shadow">
+                      <svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                      </svg>
                     </div>
-                    <h3 className="text-4xl font-heading font-bold text-slate-900 mb-2">{appointments.length}</h3>
-                    <p className="text-slate-500 font-medium tracking-wide uppercase text-xs">Number of Meetings</p>
+                    <h3 className="text-5xl font-heading font-bold text-slate-900 mb-3 group-hover:text-purple-600 transition-colors">
+                      {appointments.length}
+                    </h3>
+                    <p className="text-slate-600 font-semibold tracking-wide uppercase text-sm group-hover:text-purple-500 transition-colors">Total Meetings</p>
                   </div>
                 </div>
               </div>
             </div>
           )}
 
-          {/* Recent Activity - Clean List */}
+          {/* Appointments Section - Modern Interactive Design */}
           {!showBooking && (
             <div className="animate-slide-up">
-              <div className="flex flex-col md:flex-row md:items-center justify-between gap-8 mb-8">
-                <div>
-                  <h2 className="text-2xl font-heading font-bold text-slate-900">My Appointments</h2>
-                  <p className="text-slate-500 mt-1 text-sm font-light">Manage your scheduled visits and history.</p>
+              <div className="flex flex-col md:flex-row md:items-center justify-between gap-10 mb-16">
+                <div className="animate-fade-in-left">
+                  <h2 className="text-3xl md:text-4xl font-heading font-bold text-slate-900 mb-2">My Appointments</h2>
+                  <p className="text-slate-600 text-lg font-light">Manage your scheduled visits and history with ease.</p>
                 </div>
-                <div className="flex flex-wrap gap-2">
-                  {['all', 'upcoming', 'pending', 'past', 'cancelled'].map((tab) => (
+                <div className="flex flex-wrap gap-3 animate-fade-in-right">
+                  {['all', 'upcoming', 'pending', 'past', 'cancelled'].map((tab, index) => (
                     <button
                       key={tab}
                       onClick={() => setActiveTab(tab)}
-                      className={`px-6 py-2 rounded-full text-xs font-bold uppercase tracking-wide transition-all border ${activeTab === tab
-                        ? 'bg-slate-900 text-white border-slate-900 shadow-md transform scale-105'
-                        : 'bg-white text-slate-500 border-slate-200 hover:border-slate-300 hover:text-slate-900 hover:shadow-sm'
-                        }`}
+                      className={`group relative px-6 py-3 rounded-xl text-sm font-bold uppercase tracking-wide transition-all duration-300 border-2 overflow-hidden ${
+                        activeTab === tab
+                          ? 'bg-gradient-to-r from-blue-600 to-purple-600 text-white border-transparent shadow-lg shadow-blue-500/25 transform scale-105'
+                          : 'bg-white/80 backdrop-blur-sm text-slate-600 border-slate-200 hover:border-blue-300 hover:text-blue-600 hover:shadow-lg hover:shadow-blue-500/10 hover:-translate-y-1'
+                      }`}
+                      style={{animationDelay: `${index * 0.1}s`}}
                     >
-                      {tab}
+                      {/* Animated Background */}
+                      <div className={`absolute inset-0 bg-gradient-to-r from-blue-500 to-purple-500 transition-opacity duration-300 ${
+                        activeTab === tab ? 'opacity-100' : 'opacity-0 group-hover:opacity-20'
+                      }`}></div>
+
+                      <span className="relative z-10">{tab}</span>
+
+                      {/* Active Indicator */}
+                      {activeTab === tab && (
+                        <div className="absolute -bottom-1 left-1/2 transform -translate-x-1/2 w-2 h-2 bg-white rounded-full animate-pulse"></div>
+                      )}
                     </button>
                   ))}
                 </div>
@@ -268,7 +360,7 @@ const PatientDashboard = () => {
               ) : (
                 <div className="space-y-4">
                   {filteredAppointments.map((app) => (
-                    <div key={app.id} className="bg-white border border-slate-100 rounded-none p-6 hover:shadow-xl hover:shadow-slate-200/50 transition-all duration-300 flex flex-col md:flex-row md:items-center gap-6 group">
+                    <div key={app.id} className="bg-white border border-slate-100 rounded-2xl p-8 hover:shadow-xl hover:shadow-slate-200/50 hover:-translate-y-1 transition-all duration-300 flex flex-col md:flex-row md:items-center gap-8 group">
                       <div className="flex items-center gap-6 flex-1">
                         <div className="h-16 w-16 rounded-none bg-slate-50 flex items-center justify-center text-slate-900 font-bold text-xl shadow-sm group-hover:scale-105 transition-transform">
                           {app.doctor.split(' ').length > 1 ? app.doctor.split(' ')[1][0] : app.doctor[0]}
@@ -326,7 +418,7 @@ const PatientDashboard = () => {
 
               {/* Pagination Controls */}
               {filteredAppointments.length > 0 && (
-                <div className="flex justify-center items-center gap-4 mt-8">
+                <div className="flex justify-center items-center gap-6 mt-12">
                   <button
                     onClick={() => fetchAppointments(currentPage - 1)}
                     disabled={currentPage === 1}
@@ -355,9 +447,9 @@ const PatientDashboard = () => {
               <div className="max-w-[1200px] mx-auto px-8">
 
                 {/* Header */}
-                <div className="text-center mb-16">
-                  <h2 className="text-4xl md:text-5xl font-heading font-bold text-blue-900 mb-4 tracking-tight">Book Appointment</h2>
-                  <p className="text-blue-500 text-lg font-light">Schedule your visit with our world-class specialists.</p>
+                <div className="text-center mb-20">
+                  <h2 className="text-4xl md:text-5xl font-heading font-bold text-blue-900 mb-6 tracking-tight">Book Appointment</h2>
+                  <p className="text-blue-500 text-xl font-light">Schedule your visit with our world-class specialists.</p>
                 </div>
 
                 {/* Progress Steps - Centered & Aligned */}
