@@ -3,12 +3,18 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import DashboardLayout from '../components/DashboardLayout';
 import heroImage from '../assets/medium-shot-scientists-posing-together.jpg';
 
+import ErrorBoundary from '../components/ErrorBoundary';
+
 const PatientDashboard = () => {
+  // ... existing code ...
+
+  // ... existing code ...
   const navigate = useNavigate();
   const [user, setUser] = useState(null);
   const [appointments, setAppointments] = useState([]);
   const [showBooking, setShowBooking] = useState(false);
   const [activeTab, setActiveTab] = useState('all');
+  const [searchQuery, setSearchQuery] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [formData, setFormData] = useState({
@@ -55,11 +61,11 @@ const PatientDashboard = () => {
     }
 
     fetchAppointments(1);
-  }, [navigate, location.pathname, activeTab]); // Add activeTab dependency
+  }, [navigate, location.pathname, activeTab, searchQuery]); // Add searchQuery dependency
 
   const fetchAppointments = async (page = 1) => {
     try {
-      const response = await fetch(apiUrl(`/api/appointments?page=${page}&limit=5&tab=${activeTab}`), {
+      const response = await fetch(apiUrl(`/api/appointments?page=${page}&limit=5&tab=${activeTab}&search=${searchQuery}`), {
         headers: {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json'
@@ -152,8 +158,8 @@ const PatientDashboard = () => {
 
   return (
     <DashboardLayout role="patient">
-      <div className="min-h-screen bg-[#f8fafc] pb-32 font-sans selection:bg-blue-100 selection:text-blue-900">
-        <div className="w-full max-w-[1400px] mx-auto px-8 lg:px-16 xl:px-20 pt-16 pb-12 space-y-32">
+      <ErrorBoundary>
+        <div className="min-h-screen bg-[#f8fafc] pb-32 font-sans selection:bg-blue-100 selection:text-blue-900">
 
           {/* Hero Section - Simple & Clean */}
           {!showBooking && location.pathname === '/patient-dashboard' && (
@@ -201,6 +207,8 @@ const PatientDashboard = () => {
           {/* Dashboard Stats - Modern Interactive Cards */}
           {!showBooking && location.pathname === '/patient-dashboard' && (
             <div className="relative animate-fade-in-up mb-16">
+              {/* HealthGuard AI Chat Widget */}
+
               {/* Glass Cards Grid */}
               <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                 {/* Card 1 - Upcoming Visits */}
@@ -303,15 +311,15 @@ const PatientDashboard = () => {
                     <button
                       key={tab}
                       onClick={() => setActiveTab(tab)}
-                      className={`group relative px-6 py-3 rounded-xl text-sm font-bold uppercase tracking-wide transition-all duration-300 border-2 overflow-hidden ${activeTab === tab
-                          ? 'bg-gradient-to-r from-blue-600 to-purple-600 text-white border-transparent shadow-lg shadow-blue-500/25 transform scale-105'
-                          : 'bg-white/80 backdrop-blur-sm text-slate-600 border-slate-200 hover:border-blue-300 hover:text-blue-600 hover:shadow-lg hover:shadow-blue-500/10 hover:-translate-y-1'
-                        }`}
-                      style={{ animationDelay: `${index * 0.1}s` }}
+                      className={`group relative px - 6 py - 3 rounded - xl text - sm font - bold uppercase tracking - wide transition - all duration - 300 border - 2 overflow - hidden ${activeTab === tab
+                        ? 'bg-gradient-to-r from-blue-600 to-purple-600 text-white border-transparent shadow-lg shadow-blue-500/25 transform scale-105'
+                        : 'bg-white/80 backdrop-blur-sm text-slate-600 border-slate-200 hover:border-blue-300 hover:text-blue-600 hover:shadow-lg hover:shadow-blue-500/10 hover:-translate-y-1'
+                        } `}
+                      style={{ animationDelay: `${index * 0.1} s` }}
                     >
                       {/* Animated Background */}
-                      <div className={`absolute inset-0 bg-gradient-to-r from-blue-500 to-purple-500 transition-opacity duration-300 ${activeTab === tab ? 'opacity-100' : 'opacity-0 group-hover:opacity-20'
-                        }`}></div>
+                      <div className={`absolute inset - 0 bg - gradient - to - r from - blue - 500 to - purple - 500 transition - opacity duration - 300 ${activeTab === tab ? 'opacity-100' : 'opacity-0 group-hover:opacity-20'
+                        } `}></div>
 
                       <span className="relative z-10">{tab}</span>
 
@@ -321,6 +329,24 @@ const PatientDashboard = () => {
                       )}
                     </button>
                   ))}
+                </div>
+              </div>
+
+              {/* Search Bar */}
+              <div className="mb-8 animate-fade-in-up">
+                <div className="relative max-w-md mx-auto md:mx-0">
+                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <svg className="h-5 w-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                    </svg>
+                  </div>
+                  <input
+                    type="text"
+                    placeholder="Search by doctor name..."
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    className="block w-full pl-10 pr-3 py-3 border border-slate-200 rounded-xl leading-5 bg-white placeholder-slate-400 focus:outline-none focus:bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm transition-all shadow-sm hover:shadow-md"
+                  />
                 </div>
               </div>
 
@@ -362,9 +388,9 @@ const PatientDashboard = () => {
 
                         <div>
                           <div className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Status</div>
-                          <span className={`px-3 py-1 inline-flex text-[10px] leading-4 font-bold rounded-full uppercase tracking-wide border ${app.status === 'confirmed' ? 'bg-emerald-50 text-emerald-600 border-emerald-100' :
+                          <span className={`px - 3 py - 1 inline - flex text - [10px] leading - 4 font - bold rounded - full uppercase tracking - wide border ${app.status === 'confirmed' ? 'bg-emerald-50 text-emerald-600 border-emerald-100' :
                             app.status === 'pending' ? 'bg-amber-50 text-amber-600 border-amber-100' : 'bg-rose-50 text-rose-600 border-rose-100'
-                            }`}>
+                            } `}>
                             {app.status}
                           </span>
                         </div>
@@ -392,198 +418,201 @@ const PatientDashboard = () => {
                           title="Cancel Appointment"
                         >
                           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
-                        </button>
-                      </div>
-                    </div>
+                        </button >
+                      </div >
+                    </div >
                   ))}
-                </div>
+                </div >
               )}
 
               {/* Pagination Controls */}
-              {filteredAppointments.length > 0 && (
-                <div className="flex justify-center items-center gap-6 mt-12">
-                  <button
-                    onClick={() => fetchAppointments(currentPage - 1)}
-                    disabled={currentPage === 1}
-                    className="px-6 py-2 bg-white border border-slate-200 text-slate-700 font-bold text-sm uppercase tracking-wide hover:bg-slate-50 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
-                  >
-                    Previous
-                  </button>
-                  <span className="text-slate-500 font-medium">
-                    Page {currentPage} of {totalPages}
-                  </span>
-                  <button
-                    onClick={() => fetchAppointments(currentPage + 1)}
-                    disabled={currentPage === totalPages}
-                    className="px-6 py-2 bg-white border border-slate-200 text-slate-700 font-bold text-sm uppercase tracking-wide hover:bg-slate-50 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
-                  >
-                    Next
-                  </button>
-                </div>
-              )}
-            </div>
+              {
+                filteredAppointments.length > 0 && (
+                  <div className="flex justify-center items-center gap-6 mt-12">
+                    <button
+                      onClick={() => fetchAppointments(currentPage - 1)}
+                      disabled={currentPage === 1}
+                      className="px-6 py-2 bg-white border border-slate-200 text-slate-700 font-bold text-sm uppercase tracking-wide hover:bg-slate-50 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+                    >
+                      Previous
+                    </button>
+                    <span className="text-slate-500 font-medium">
+                      Page {currentPage} of {totalPages}
+                    </span>
+                    <button
+                      onClick={() => fetchAppointments(currentPage + 1)}
+                      disabled={currentPage === totalPages}
+                      className="px-6 py-2 bg-white border border-slate-200 text-slate-700 font-bold text-sm uppercase tracking-wide hover:bg-slate-50 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+                    >
+                      Next
+                    </button>
+                  </div>
+                )
+              }
+            </div >
           )}
 
           {/* BOOKING WIZARD - Clean Blue & White Theme */}
-          {showBooking && (
-            <div className="w-full animate-fade-in pb-20 pt-10">
-              <div className="max-w-[1200px] mx-auto px-8">
+          {
+            showBooking && (
+              <div className="w-full animate-fade-in pb-20 pt-10">
+                <div className="max-w-[1200px] mx-auto px-8">
 
-                {/* Header */}
-                <div className="text-center mb-20">
-                  <h2 className="text-4xl md:text-5xl font-heading font-bold text-blue-900 mb-6 tracking-tight">Book Appointment</h2>
-                  <p className="text-blue-500 text-xl font-light">Schedule your visit with our world-class specialists.</p>
-                </div>
+                  {/* Header */}
+                  <div className="text-center mb-20">
+                    <h2 className="text-4xl md:text-5xl font-heading font-bold text-blue-900 mb-6 tracking-tight">Book Appointment</h2>
+                    <p className="text-blue-500 text-xl font-light">Schedule your visit with our world-class specialists.</p>
+                  </div>
 
-                {/* Progress Steps - Centered & Aligned */}
-                <div className="flex justify-center mb-16">
-                  <div className="w-full max-w-3xl relative">
-                    {/* Connecting Line */}
-                    <div className="absolute top-5 left-0 w-full h-0.5 bg-blue-100 -z-10"></div>
+                  {/* Progress Steps - Centered & Aligned */}
+                  <div className="flex justify-center mb-16">
+                    <div className="w-full max-w-3xl relative">
+                      {/* Connecting Line */}
+                      <div className="absolute top-5 left-0 w-full h-0.5 bg-blue-100 -z-10"></div>
 
-                    <div className="flex justify-between w-full">
-                      {/* Step 1 */}
-                      <div className="flex flex-col items-center gap-3">
-                        <div className="w-10 h-10 rounded-full bg-blue-600 text-white flex items-center justify-center font-bold text-sm shadow-lg shadow-blue-200 ring-4 ring-white">1</div>
-                        <span className="text-xs font-bold text-blue-900 uppercase tracking-wider">Specialist</span>
-                      </div>
+                      <div className="flex justify-between w-full">
+                        {/* Step 1 */}
+                        <div className="flex flex-col items-center gap-3">
+                          <div className="w-10 h-10 rounded-full bg-blue-600 text-white flex items-center justify-center font-bold text-sm shadow-lg shadow-blue-200 ring-4 ring-white">1</div>
+                          <span className="text-xs font-bold text-blue-900 uppercase tracking-wider">Specialist</span>
+                        </div>
 
-                      {/* Step 2 */}
-                      <div className="flex flex-col items-center gap-3">
-                        <div className={`w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm ring-4 ring-white ${formData.date ? 'bg-blue-600 text-white shadow-lg shadow-blue-200' : 'bg-white border-2 border-blue-100 text-blue-300'}`}>2</div>
-                        <span className={`text-xs font-bold uppercase tracking-wider ${formData.date ? 'text-blue-900' : 'text-blue-300'}`}>Details</span>
-                      </div>
+                        {/* Step 2 */}
+                        <div className="flex flex-col items-center gap-3">
+                          <div className={`w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm ring-4 ring-white ${formData.date ? 'bg-blue-600 text-white shadow-lg shadow-blue-200' : 'bg-white border-2 border-blue-100 text-blue-300'}`}>2</div>
+                          <span className={`text-xs font-bold uppercase tracking-wider ${formData.date ? 'text-blue-900' : 'text-blue-300'}`}>Details</span>
+                        </div>
 
-                      {/* Step 3 */}
-                      <div className="flex flex-col items-center gap-3">
-                        <div className="w-10 h-10 rounded-full bg-white border-2 border-blue-100 text-blue-300 flex items-center justify-center font-bold text-sm ring-4 ring-white">3</div>
-                        <span className="text-xs font-bold text-blue-300 uppercase tracking-wider">Confirm</span>
+                        {/* Step 3 */}
+                        <div className="flex flex-col items-center gap-3">
+                          <div className="w-10 h-10 rounded-full bg-white border-2 border-blue-100 text-blue-300 flex items-center justify-center font-bold text-sm ring-4 ring-white">3</div>
+                          <span className="text-xs font-bold text-blue-300 uppercase tracking-wider">Confirm</span>
+                        </div>
                       </div>
                     </div>
                   </div>
-                </div>
 
-                <div className="bg-white rounded-none shadow-xl shadow-blue-100/50 border border-blue-50 overflow-hidden relative">
+                  <div className="bg-white rounded-none shadow-xl shadow-blue-100/50 border border-blue-50 overflow-hidden relative">
 
-                  <div className="p-8 md:p-12 relative z-10 space-y-12">
+                    <div className="p-8 md:p-12 relative z-10 space-y-12">
 
-                    {/* Section 1: Specialist Selection */}
-                    <div>
-                      <h3 className="text-xl font-bold text-blue-900 mb-8 flex items-center gap-3">
-                        <span className="w-8 h-8 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center text-sm">1</span>
-                        Select a Specialist
-                      </h3>
-                      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                        {doctors.map((doc) => (
-                          <div
-                            key={doc.value}
-                            onClick={() => {
-                              setFormData(prev => ({ ...prev, doctor: doc.value, doctorName: doc.name, specialization: doc.specialization }));
-                              setFormErrors(prev => ({ ...prev, doctor: '' }));
-                            }}
-                            className={`cursor-pointer group relative p-8 rounded-none border transition-all duration-300 flex flex-col items-center text-center ${formData.doctor === doc.value
-                              ? 'bg-blue-600 border-blue-600 shadow-xl shadow-blue-200 transform scale-[1.02]'
-                              : 'bg-white border-blue-50 hover:border-blue-200 hover:shadow-lg hover:shadow-blue-50 hover:-translate-y-1'
-                              }`}
-                          >
-                            <div className={`w-20 h-20 rounded-none mb-6 flex items-center justify-center text-2xl font-bold transition-colors ${formData.doctor === doc.value ? 'bg-white/10 text-white' : 'bg-blue-50 text-blue-600 group-hover:bg-blue-100'
-                              }`}>
-                              {doc.name.split(' ').length > 1 ? doc.name.split(' ')[1][0] : doc.name[0]}
-                            </div>
-                            <h4 className={`text-lg font-bold mb-1 ${formData.doctor === doc.value ? 'text-white' : 'text-blue-900'}`}>{doc.name}</h4>
-                            <p className={`text-xs font-bold uppercase tracking-widest mb-6 ${formData.doctor === doc.value ? 'text-blue-100' : 'text-blue-400'}`}>{doc.specialization}</p>
-
-                            {formData.doctor === doc.value && (
-                              <div className="absolute top-4 right-4 w-6 h-6 bg-white rounded-full flex items-center justify-center text-blue-600">
-                                <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" /></svg>
+                      {/* Section 1: Specialist Selection */}
+                      <div>
+                        <h3 className="text-xl font-bold text-blue-900 mb-8 flex items-center gap-3">
+                          <span className="w-8 h-8 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center text-sm">1</span>
+                          Select a Specialist
+                        </h3>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                          {doctors.map((doc) => (
+                            <div
+                              key={doc.value}
+                              onClick={() => {
+                                setFormData(prev => ({ ...prev, doctor: doc.value, doctorName: doc.name, specialization: doc.specialization }));
+                                setFormErrors(prev => ({ ...prev, doctor: '' }));
+                              }}
+                              className={`cursor-pointer group relative p-8 rounded-none border transition-all duration-300 flex flex-col items-center text-center ${formData.doctor === doc.value
+                                ? 'bg-blue-600 border-blue-600 shadow-xl shadow-blue-200 transform scale-[1.02]'
+                                : 'bg-white border-blue-50 hover:border-blue-200 hover:shadow-lg hover:shadow-blue-50 hover:-translate-y-1'
+                                }`}
+                            >
+                              <div className={`w-20 h-20 rounded-none mb-6 flex items-center justify-center text-2xl font-bold transition-colors ${formData.doctor === doc.value ? 'bg-white/10 text-white' : 'bg-blue-50 text-blue-600 group-hover:bg-blue-100'
+                                }`}>
+                                {doc.name.split(' ').length > 1 ? doc.name.split(' ')[1][0] : doc.name[0]}
                               </div>
-                            )}
+                              <h4 className={`text-lg font-bold mb-1 ${formData.doctor === doc.value ? 'text-white' : 'text-blue-900'}`}>{doc.name}</h4>
+                              <p className={`text-xs font-bold uppercase tracking-widest mb-6 ${formData.doctor === doc.value ? 'text-blue-100' : 'text-blue-400'}`}>{doc.specialization}</p>
+
+                              {formData.doctor === doc.value && (
+                                <div className="absolute top-4 right-4 w-6 h-6 bg-white rounded-full flex items-center justify-center text-blue-600">
+                                  <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" /></svg>
+                                </div>
+                              )}
+                            </div>
+                          ))}
+                        </div>
+                        {formErrors.doctor && <p className="text-rose-500 font-medium mt-6 text-center animate-pulse">Please select a specialist.</p>}
+                      </div>
+
+                      <div className="w-full h-px bg-blue-50"></div>
+
+                      {/* Section 2: Details */}
+                      <div>
+                        <h3 className="text-xl font-bold text-blue-900 mb-8 flex items-center gap-3">
+                          <span className="w-8 h-8 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center text-sm">2</span>
+                          Appointment Details
+                        </h3>
+
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
+                          <div className="space-y-3">
+                            <label className="block text-xs font-bold text-blue-400 uppercase tracking-widest ml-1">Date</label>
+                            <input
+                              type="date"
+                              name="date"
+                              value={formData.date}
+                              onChange={handleInputChange}
+                              min={new Date().toISOString().split('T')[0]}
+                              className="w-full p-4 rounded-none bg-blue-50/50 border border-blue-100 text-lg font-bold text-blue-900 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 focus:bg-white focus:outline-none transition-all placeholder-blue-300 appearance-none"
+                            />
+                            {formErrors.date && <p className="text-sm text-rose-500 font-medium pl-2">{formErrors.date}</p>}
                           </div>
-                        ))}
-                      </div>
-                      {formErrors.doctor && <p className="text-rose-500 font-medium mt-6 text-center animate-pulse">Please select a specialist.</p>}
-                    </div>
-
-                    <div className="w-full h-px bg-blue-50"></div>
-
-                    {/* Section 2: Details */}
-                    <div>
-                      <h3 className="text-xl font-bold text-blue-900 mb-8 flex items-center gap-3">
-                        <span className="w-8 h-8 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center text-sm">2</span>
-                        Appointment Details
-                      </h3>
-
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
-                        <div className="space-y-3">
-                          <label className="block text-xs font-bold text-blue-400 uppercase tracking-widest ml-1">Date</label>
-                          <input
-                            type="date"
-                            name="date"
-                            value={formData.date}
-                            onChange={handleInputChange}
-                            min={new Date().toISOString().split('T')[0]}
-                            className="w-full p-4 rounded-none bg-blue-50/50 border border-blue-100 text-lg font-bold text-blue-900 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 focus:bg-white focus:outline-none transition-all placeholder-blue-300 appearance-none"
-                          />
-                          {formErrors.date && <p className="text-sm text-rose-500 font-medium pl-2">{formErrors.date}</p>}
+                          <div className="space-y-3">
+                            <label className="block text-xs font-bold text-blue-400 uppercase tracking-widest ml-1">Time</label>
+                            <input
+                              type="time"
+                              name="time"
+                              value={formData.time}
+                              onChange={handleInputChange}
+                              className="w-full p-4 rounded-none bg-blue-50/50 border border-blue-100 text-lg font-bold text-blue-900 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 focus:bg-white focus:outline-none transition-all placeholder-blue-300 appearance-none"
+                            />
+                            {formErrors.time && <p className="text-sm text-rose-500 font-medium pl-2">{formErrors.time}</p>}
+                          </div>
                         </div>
+
                         <div className="space-y-3">
-                          <label className="block text-xs font-bold text-blue-400 uppercase tracking-widest ml-1">Time</label>
-                          <input
-                            type="time"
-                            name="time"
-                            value={formData.time}
+                          <label className="block text-xs font-bold text-blue-400 uppercase tracking-widest ml-1">Reason for Visit</label>
+                          <textarea
+                            name="reason"
+                            value={formData.reason}
                             onChange={handleInputChange}
-                            className="w-full p-4 rounded-none bg-blue-50/50 border border-blue-100 text-lg font-bold text-blue-900 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 focus:bg-white focus:outline-none transition-all placeholder-blue-300 appearance-none"
+                            rows={4}
+                            className="w-full p-5 rounded-none bg-blue-50/50 border border-blue-100 text-lg font-medium text-blue-900 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 focus:bg-white focus:outline-none transition-all resize-none placeholder-blue-300"
+                            placeholder="Please describe your symptoms..."
                           />
-                          {formErrors.time && <p className="text-sm text-rose-500 font-medium pl-2">{formErrors.time}</p>}
+                          {formErrors.reason && <p className="text-sm text-rose-500 font-medium pl-2">{formErrors.reason}</p>}
                         </div>
                       </div>
 
-                      <div className="space-y-3">
-                        <label className="block text-xs font-bold text-blue-400 uppercase tracking-widest ml-1">Reason for Visit</label>
-                        <textarea
-                          name="reason"
-                          value={formData.reason}
-                          onChange={handleInputChange}
-                          rows={4}
-                          className="w-full p-5 rounded-none bg-blue-50/50 border border-blue-100 text-lg font-medium text-blue-900 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 focus:bg-white focus:outline-none transition-all resize-none placeholder-blue-300"
-                          placeholder="Please describe your symptoms..."
-                        />
-                        {formErrors.reason && <p className="text-sm text-rose-500 font-medium pl-2">{formErrors.reason}</p>}
+                      {/* Actions */}
+                      <div className="flex flex-col md:flex-row items-center justify-end gap-6 pt-10 border-t border-blue-50 mt-8">
+                        <button
+                          type="button"
+                          onClick={() => setShowBooking(false)}
+                          className="w-full md:w-auto px-10 py-4 rounded-none text-blue-400 font-bold text-sm hover:bg-blue-50 hover:text-blue-700 transition-all uppercase tracking-widest"
+                        >
+                          Cancel
+                        </button>
+                        <button
+                          type="submit"
+                          onClick={handleSubmit}
+                          disabled={submitting}
+                          className="w-full md:w-auto bg-blue-600 text-white px-12 py-4 rounded-none font-bold text-sm hover:bg-blue-700 hover:shadow-xl hover:-translate-y-1 transition-all shadow-lg shadow-blue-200 disabled:opacity-70 disabled:cursor-not-allowed uppercase tracking-widest flex items-center justify-center gap-4"
+                        >
+                          {submitting ? 'Processing...' : 'Confirm Booking'}
+                          {!submitting && <span className="text-xl">→</span>}
+                        </button>
                       </div>
-                    </div>
 
-                    {/* Actions */}
-                    <div className="flex flex-col md:flex-row items-center justify-end gap-6 pt-10 border-t border-blue-50 mt-8">
-                      <button
-                        type="button"
-                        onClick={() => setShowBooking(false)}
-                        className="w-full md:w-auto px-10 py-4 rounded-none text-blue-400 font-bold text-sm hover:bg-blue-50 hover:text-blue-700 transition-all uppercase tracking-widest"
-                      >
-                        Cancel
-                      </button>
-                      <button
-                        type="submit"
-                        onClick={handleSubmit}
-                        disabled={submitting}
-                        className="w-full md:w-auto bg-blue-600 text-white px-12 py-4 rounded-none font-bold text-sm hover:bg-blue-700 hover:shadow-xl hover:-translate-y-1 transition-all shadow-lg shadow-blue-200 disabled:opacity-70 disabled:cursor-not-allowed uppercase tracking-widest flex items-center justify-center gap-4"
-                      >
-                        {submitting ? 'Processing...' : 'Confirm Booking'}
-                        {!submitting && <span className="text-xl">→</span>}
-                      </button>
                     </div>
-
                   </div>
                 </div>
               </div>
-            </div>
-          )}
+            )
+          }
 
-        </div>
-      </div>
-    </DashboardLayout>
+        </div >
+      </ErrorBoundary>
+    </DashboardLayout >
   );
 };
 
 export default PatientDashboard;
-

@@ -374,8 +374,14 @@ app.get("/api/appointments", authenticateToken, roleMiddleware(["patient"]), asy
     const tab = req.query.tab || 'upcoming';
     const skip = (page - 1) * limit;
 
+    const search = req.query.search || '';
+
     let query = { patientId: req.user.id };
     const today = new Date().toISOString().split('T')[0];
+
+    if (search) {
+      query.doctorName = { $regex: search, $options: 'i' };
+    }
 
     if (tab === 'upcoming') {
       query.status = 'confirmed'; // Only confirmed for upcoming
