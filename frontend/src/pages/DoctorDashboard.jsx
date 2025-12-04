@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import DashboardLayout from '../components/DashboardLayout';
 
-const API_BASE = window.API_BASE_URL || 'http://localhost:4000';
+const API_BASE = import.meta.env.VITE_API_BASE_URL || 'http://localhost:4000';
 const apiUrl = (path) => `${API_BASE}${path}`;
 
 const DoctorDashboard = () => {
