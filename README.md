@@ -1,61 +1,86 @@
-## Auth Portal (Separated Frontend & Backend)
+# Healthcare Appointment System
 
-Clean login/signup experience backed by Node/Express, MongoDB, and JWT. The repo now exposes two clear entry points so you can reason about each layer independently:
+A full-stack healthcare appointment management system with role-based access control (Patient, Doctor, Admin).
 
-- `backend/` → API server (Express, MongoDB, JWT).
-- `frontend/` → Static UI (HTML/CSS/JS).
+## Project Structure
 
-### Backend Setup (`backend/`)
+- **`backend/`**: Node.js/Express API server with MongoDB.
+- **`frontend/`**: React application built with Vite and Tailwind CSS.
 
-1. Install dependencies
-   ```
-   cd backend
-   npm install
-   ```
-2. Configure environment
-   ```
-   cp .env.example .env
-   ```
-   Edit `.env` with:
-   - `MONGODB_URI` → your database connection string.
-   - `JWT_SECRET` → long random secret.
-   - `PORT` *(optional)* → defaults to `4000`.
-   - `CLIENT_ORIGINS` *(optional)* → comma-separated list of allowed browser origins. Leave blank to allow all (useful during development).
-3. Start MongoDB locally (e.g., `mongodb-community` via Homebrew or Docker) or point `MONGODB_URI` to Atlas/another host.
-   - If you skip this step, the server now spins up an **in-memory MongoDB** for local testing, but that data disappears when the process stops.
-4. Run the server
-   ```
-   npm run dev   # nodemon autoreload
-   # or
-   npm start
-   ```
-   The API is available at `http://localhost:4000` by default. Root path (`/`) responds with a status JSON; all functional routes live under `/api/auth/*`.
+## Features
 
-#### API Reference
+- **Authentication**: Secure Signup and Login with JWT.
+- **Role-Based Dashboards**:
+    - **Patient**: Book appointments, view history, cancel appointments.
+    - **Doctor**: View scheduled appointments, update appointment status.
+    - **Admin**: Manage users, view system stats.
+- **Appointment Management**: Full flow from booking to confirmation/cancellation.
+- **Responsive Design**: Modern UI with Tailwind CSS.
 
-| Method | Path               | Description                                    |
-| ------ | ------------------ | ---------------------------------------------- |
-| POST   | `/api/auth/signup` | Create account, returns `{ token, user }`      |
-| POST   | `/api/auth/login`  | Validate credentials, returns `{ token, user }`|
-| GET    | `/api/auth/me`     | Validate JWT (in `Authorization: Bearer ...`)  |
-| POST   | `/api/auth/logout` | Stateless helper to invalidate tokens client-side |
+## Getting Started
 
-### Frontend Setup (`frontend/`)
+### 1. Backend Setup
 
-This is a lightweight static site. You can open `index.html` directly in a browser or serve it:
+1.  Navigate to the backend directory:
+    ```bash
+    cd backend
+    ```
+2.  Install dependencies:
+    ```bash
+    npm install
+    ```
+3.  Configure Environment:
+    - Create a `.env` file (copy from `.env.example` if available).
+    - Set `MONGODB_URI` to your MongoDB connection string.
+    - Set `JWT_SECRET` to a secure string.
+    - Set `PORT` (default: 4000).
+4.  Start the server:
+    ```bash
+    npm run dev
+    ```
+    The server will run on `http://localhost:4000`.
 
-```
-cd frontend
-npx serve .
-# or use VS Code / Cursor "Live Server"
-```
+### 2. Frontend Setup
 
-The script assumes `http://localhost:4000` for the API. If you host the backend elsewhere, define `window.API_BASE_URL` before loading `app.js` or edit the constant at the top of the file.
+1.  Navigate to the frontend directory:
+    ```bash
+    cd frontend
+    ```
+2.  Install dependencies:
+    ```bash
+    npm install
+    ```
+3.  Start the development server:
+    ```bash
+    npm run dev
+    ```
+    The application will be available at `http://localhost:5173` (or the port shown in your terminal).
 
-### Flow Notes
+## Usage
 
-- The page opens on the login form with signup directly below.
-- When a JWT already exists in `localStorage`, any new sign-in attempt shows an alert and surfaces the success panel immediately.
-- Successful signup/login persists the token, fetches the profile via `/api/auth/me`, and swaps to the success state with logout controls.
+1.  **Sign Up**: Create a new account. By default, new users are **Patients**.
+2.  **Login**: Sign in with your credentials.
+3.  **Patient Dashboard**:
+    - Book an appointment by selecting a doctor, date, and time.
+    - View upcoming and past appointments.
+    - Cancel pending appointments.
+4.  **Doctor/Admin Access**:
+    - Currently, roles are managed in the database.
+    - To test Doctor/Admin features, you may need to manually update the user role in MongoDB to `doctor` or `admin`.
 
-# full-stack-project
+## API Endpoints
+
+| Method | Endpoint | Description |
+| :--- | :--- | :--- |
+| POST | `/api/auth/signup` | Register a new user |
+| POST | `/api/auth/login` | Login user |
+| GET | `/api/auth/me` | Get current user profile |
+| POST | `/api/appointments` | Create a new appointment |
+| GET | `/api/appointments` | Get user's appointments |
+| PUT | `/api/appointments/:id/cancel` | Cancel an appointment |
+
+## Tech Stack
+
+- **Frontend**: React, Vite, Tailwind CSS, React Router
+- **Backend**: Node.js, Express, Mongoose
+- **Database**: MongoDB

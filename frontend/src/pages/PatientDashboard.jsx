@@ -155,10 +155,10 @@ const PatientDashboard = () => {
       <div className="min-h-screen bg-[#f8fafc] pb-32 font-sans selection:bg-blue-100 selection:text-blue-900">
         <div className="w-full max-w-[1400px] mx-auto px-8 lg:px-16 xl:px-20 pt-16 pb-12 space-y-32">
 
-          {/* Hero Section - Full Image with Text Overlay */}
+          {/* Hero Section - Simple & Clean */}
           {!showBooking && location.pathname === '/patient-dashboard' && (
-            <div className="relative w-full mb-32 overflow-hidden">
-              {/* Full Image - Maintain Aspect Ratio */}
+            <div className="relative w-full mb-32 overflow-hidden rounded-3xl shadow-xl">
+              {/* Full Image */}
               <img
                 src={heroImage}
                 alt="Healthcare professionals"
@@ -166,47 +166,32 @@ const PatientDashboard = () => {
                 style={{ maxHeight: '70vh' }}
               />
 
-              {/* Dark Overlay for Text Readability */}
-              <div className="absolute inset-0 bg-black/50"></div>
+              {/* Simple Gradient Overlay */}
+              <div className="absolute inset-0 bg-gradient-to-t from-blue-900/90 via-blue-900/40 to-transparent"></div>
 
               {/* Text and Buttons Overlay */}
               <div className="absolute inset-0 flex flex-col items-center justify-center text-center px-6 lg:px-12">
-                <h1 className="text-4xl md:text-6xl font-heading font-bold text-white mb-6 tracking-tight drop-shadow-lg">
+                <h1 className="text-4xl md:text-6xl font-heading font-bold text-white tracking-tight leading-tight mb-6 drop-shadow-lg">
                   Making Health Care Better Together
                 </h1>
-                <p className="text-xl md:text-2xl text-white/90 font-light mb-12 leading-relaxed max-w-2xl drop-shadow-md">
-                  Book and manage your appointments in seconds.
+
+                <p className="text-xl md:text-2xl text-blue-50 font-light leading-relaxed max-w-2xl mb-10 drop-shadow-md">
+                  Book and manage your appointments in seconds with our intelligent healthcare platform.
                 </p>
-                <div className="flex flex-col sm:flex-row gap-8">
+
+                <div className="flex flex-col sm:flex-row gap-6">
                   <button
                     onClick={() => navigate('/patient-dashboard/book')}
-                    className="group relative px-10 py-5 bg-gradient-to-r from-white to-blue-50 text-blue-900 font-bold text-xl rounded-2xl shadow-2xl shadow-blue-500/20 hover:shadow-blue-500/40 hover:shadow-3xl hover:-translate-y-2 transition-all duration-500 overflow-hidden border-2 border-white/50 backdrop-blur-sm"
+                    className="px-10 py-4 bg-blue-600 text-white font-bold text-lg rounded-xl shadow-lg hover:bg-blue-700 transition-all hover:-translate-y-1"
                   >
-                    <div className="absolute inset-0 bg-gradient-to-r from-blue-500/0 to-purple-500/0 group-hover:from-blue-500/10 group-hover:to-purple-500/10 transition-all duration-500"></div>
-                    <span className="relative flex items-center gap-3">
-                      <svg className="w-6 h-6 group-hover:rotate-12 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-                      </svg>
-                      Book Appointment
-                      <svg className="w-5 h-5 group-hover:translate-x-1 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
-                      </svg>
-                    </span>
+                    Book Appointment
                   </button>
+
                   <button
                     onClick={() => navigate('/patient-dashboard/appointments')}
-                    className="group relative px-10 py-5 bg-transparent border-2 border-white/90 text-white font-bold text-xl rounded-2xl hover:bg-white hover:text-blue-900 hover:border-white hover:shadow-2xl hover:shadow-white/20 hover:-translate-y-2 transition-all duration-500 backdrop-blur-sm"
+                    className="px-10 py-4 bg-white/20 backdrop-blur-md border border-white/40 text-white font-bold text-lg rounded-xl hover:bg-white/30 transition-all hover:-translate-y-1"
                   >
-                    <div className="absolute inset-0 bg-gradient-to-r from-white/0 to-white/0 group-hover:from-white/95 group-hover:to-blue-50/95 transition-all duration-500 rounded-2xl"></div>
-                    <span className="relative flex items-center gap-3">
-                      <svg className="w-6 h-6 group-hover:scale-110 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
-                      </svg>
-                      My Appointments
-                      <svg className="w-5 h-5 group-hover:translate-x-1 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                      </svg>
-                    </span>
+                    My Appointments
                   </button>
                 </div>
               </div>
@@ -259,7 +244,7 @@ const PatientDashboard = () => {
                   </div>
 
                   {/* Pulse Ring */}
-                  <div className="absolute top-6 right-6 w-12 h-12 border-2 border-emerald-400/30 rounded-full animate-ping" style={{animationDelay: '0.5s'}}></div>
+                  <div className="absolute top-6 right-6 w-12 h-12 border-2 border-emerald-400/30 rounded-full animate-ping" style={{ animationDelay: '0.5s' }}></div>
 
                   <div className="relative z-10">
                     <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-emerald-500 to-emerald-600 text-white flex items-center justify-center mb-6 shadow-lg group-hover:shadow-emerald-500/50 transition-shadow">
@@ -287,7 +272,7 @@ const PatientDashboard = () => {
                   </div>
 
                   {/* Pulse Ring */}
-                  <div className="absolute top-8 right-8 w-12 h-12 border-2 border-purple-400/30 rounded-full animate-ping" style={{animationDelay: '1s'}}></div>
+                  <div className="absolute top-8 right-8 w-12 h-12 border-2 border-purple-400/30 rounded-full animate-ping" style={{ animationDelay: '1s' }}></div>
 
                   <div className="relative z-10">
                     <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-purple-500 to-purple-600 text-white flex items-center justify-center mb-8 shadow-lg group-hover:shadow-purple-500/50 transition-shadow">
@@ -318,17 +303,15 @@ const PatientDashboard = () => {
                     <button
                       key={tab}
                       onClick={() => setActiveTab(tab)}
-                      className={`group relative px-6 py-3 rounded-xl text-sm font-bold uppercase tracking-wide transition-all duration-300 border-2 overflow-hidden ${
-                        activeTab === tab
+                      className={`group relative px-6 py-3 rounded-xl text-sm font-bold uppercase tracking-wide transition-all duration-300 border-2 overflow-hidden ${activeTab === tab
                           ? 'bg-gradient-to-r from-blue-600 to-purple-600 text-white border-transparent shadow-lg shadow-blue-500/25 transform scale-105'
                           : 'bg-white/80 backdrop-blur-sm text-slate-600 border-slate-200 hover:border-blue-300 hover:text-blue-600 hover:shadow-lg hover:shadow-blue-500/10 hover:-translate-y-1'
-                      }`}
-                      style={{animationDelay: `${index * 0.1}s`}}
+                        }`}
+                      style={{ animationDelay: `${index * 0.1}s` }}
                     >
                       {/* Animated Background */}
-                      <div className={`absolute inset-0 bg-gradient-to-r from-blue-500 to-purple-500 transition-opacity duration-300 ${
-                        activeTab === tab ? 'opacity-100' : 'opacity-0 group-hover:opacity-20'
-                      }`}></div>
+                      <div className={`absolute inset-0 bg-gradient-to-r from-blue-500 to-purple-500 transition-opacity duration-300 ${activeTab === tab ? 'opacity-100' : 'opacity-0 group-hover:opacity-20'
+                        }`}></div>
 
                       <span className="relative z-10">{tab}</span>
 
@@ -360,7 +343,7 @@ const PatientDashboard = () => {
               ) : (
                 <div className="space-y-4">
                   {filteredAppointments.map((app) => (
-                    <div key={app.id} className="bg-white border border-slate-100 rounded-2xl p-8 hover:shadow-xl hover:shadow-slate-200/50 hover:-translate-y-1 transition-all duration-300 flex flex-col md:flex-row md:items-center gap-8 group">
+                    <div key={app.id} className="bg-white border border-slate-100 rounded-2xl p-8 hover:shadow-xl hover:shadow-slate-200/50 hover:-translate-y-1 transition-all duration-300 flex flex-col md:flex-row md:items-center gap-8 group animate-cosmic-explosion">
                       <div className="flex items-center gap-6 flex-1">
                         <div className="h-16 w-16 rounded-none bg-slate-50 flex items-center justify-center text-slate-900 font-bold text-xl shadow-sm group-hover:scale-105 transition-transform">
                           {app.doctor.split(' ').length > 1 ? app.doctor.split(' ')[1][0] : app.doctor[0]}
