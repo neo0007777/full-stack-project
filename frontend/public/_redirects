@@ -1,5 +1,2 @@
-<<<<<<< HEAD
-=======
 # Redirect all requests to index.html for SPA routing
->>>>>>> 422d1de50cad87bd913274700c9af1bf6573a327
 /* /index.html 200

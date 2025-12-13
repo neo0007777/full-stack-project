@@ -13,6 +13,7 @@ import AppointmentDetails from './pages/AppointmentDetails';
 function App() {
   // Check if user is already authenticated on app load
 
+
   return (
     <BrowserRouter>
       <AppointmentProvider>
@@ -47,8 +48,8 @@ function App() {
 
           <Route path="*" element={<Navigate to="/login" replace />} />
         </Routes>
-      </AppointmentProvider>
-    </BrowserRouter>
+      </AppointmentProvider >
+    </BrowserRouter >
   );
 }
 
