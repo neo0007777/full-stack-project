@@ -2,3 +2,12 @@ node_modules/
 .env
 .DS_Store
 .vscode/
+<<<<<<< HEAD
+=======
+
+# Local env
+frontend/.env.local
+
+# Build output
+frontend/dist/
+>>>>>>> 422d1de50cad87bd913274700c9af1bf6573a327

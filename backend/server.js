@@ -369,6 +369,7 @@ app.post("/api/appointments", authenticateToken, roleMiddleware(["patient"]), as
 // ✅ GET PATIENT APPOINTMENTS (Patient only)
 app.get("/api/appointments", authenticateToken, roleMiddleware(["patient"]), async (req, res) => {
   try {
+<<<<<<< HEAD
     const url = require('url');
     const parsedUrl = url.parse(req.url, true);
     const page = parseInt(parsedUrl.query.page) || parseInt(req.query.page) || 1;
@@ -380,11 +381,25 @@ app.get("/api/appointments", authenticateToken, roleMiddleware(["patient"]), asy
     console.log(`🔍 GET /api/appointments - Tab: ${tab}, Search: "${search}", Page: ${page}`);
 
     let query = { patientId: req.user.id };
+=======
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 5;
+    const tab = req.query.tab || 'upcoming';
+    const skip = (page - 1) * limit;
+
+    const search = req.query.search || '';
+
+    let query = { patientId: req.user.id };
+    const today = new Date().toISOString().split('T')[0];
+>>>>>>> 422d1de50cad87bd913274700c9af1bf6573a327
 
     if (search) {
       query.doctorName = { $regex: search, $options: 'i' };
     }
+<<<<<<< HEAD
     const today = new Date().toISOString().split('T')[0];
+=======
+>>>>>>> 422d1de50cad87bd913274700c9af1bf6573a327
 
     if (tab === 'upcoming') {
       query.status = 'confirmed'; // Only confirmed for upcoming
@@ -402,6 +417,10 @@ app.get("/api/appointments", authenticateToken, roleMiddleware(["patient"]), asy
       // No status filter, return everything
     }
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> 422d1de50cad87bd913274700c9af1bf6573a327
     const totalAppointments = await Appointment.countDocuments(query);
     const totalPages = Math.ceil(totalAppointments / limit);
 
@@ -491,10 +510,16 @@ app.put("/api/appointments/:id/cancel", authenticateToken, roleMiddleware(["pati
 // ✅ GET DOCTOR APPOINTMENTS (Doctor only)
 app.get("/api/doctor/appointments", authenticateToken, roleMiddleware(["doctor"]), async (req, res) => {
   try {
+<<<<<<< HEAD
     // Filter by doctorName matches the logged-in user's name
     const appointments = await Appointment.find({
       doctorName: req.user.name
     }).sort({ createdAt: -1 });
+=======
+    // For now, fetch all appointments. In a real app, filter by doctorId or doctorName
+    // const appointments = await Appointment.find({ doctorName: req.user.name }).sort({ createdAt: -1 });
+    const appointments = await Appointment.find().sort({ createdAt: -1 });
+>>>>>>> 422d1de50cad87bd913274700c9af1bf6573a327
 
     res.json({ appointments });
   } catch (err) {
