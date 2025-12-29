@@ -4,7 +4,11 @@ const isLocalNetwork = window.location.hostname === 'localhost' || window.locati
 const API_URL = import.meta.env.VITE_API_URL ||
     (isLocalNetwork
         ? `http://${window.location.hostname}:4000`
-        : "https://your-backend-url-here.com"); // Needs HTTPS backend for Netlify
+        : import.meta.env.VITE_API_URL || "https://replace-me-with-render-or-tunnel-url.com");
+
+if (!isLocalNetwork && API_URL.includes("replace-me")) {
+    console.error("CRITICAL ERROR: You are on production (Netlify) but have not set VITE_API_URL. The app cannot connect to your local backend. See the 'How to fix' notification.");
+}
 
 
 export default API_URL;
