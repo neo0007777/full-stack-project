@@ -1,8 +1,9 @@
 import { useState, useEffect } from 'react';
 import DashboardLayout from '../components/DashboardLayout';
+import API_URL from '../config';
 import '../styles/dashboard.css';
 
-const API_BASE = window.API_BASE_URL || 'http://localhost:4000';
+const API_BASE = API_URL;
 const apiUrl = (path) => `${API_BASE}${path}`;
 
 const AdminDashboard = () => {

@@ -4,6 +4,8 @@ import DashboardLayout from '../components/DashboardLayout';
 import heroImage from '../assets/medium-shot-scientists-posing-together.jpg';
 import '../styles/dashboard.css';
 
+import API_URL from '../config';
+
 const PatientDashboard = () => {
   const navigate = useNavigate();
   const [user, setUser] = useState(null);
@@ -35,7 +37,7 @@ const PatientDashboard = () => {
 
   const location = useLocation();
 
-  const API_BASE = window.API_BASE_URL || 'http://localhost:4000';
+  const API_BASE = API_URL;
   const apiUrl = (path) => `${API_BASE}${path}`;
   const token = localStorage.getItem('authToken');
 

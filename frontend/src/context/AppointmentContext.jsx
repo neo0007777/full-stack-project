@@ -1,6 +1,8 @@
 import { createContext, useContext, useState, useEffect } from 'react';
 
-const API_BASE = window.API_BASE_URL || 'http://localhost:4000';
+import API_URL from '../config';
+
+const API_BASE = API_URL;
 const apiUrl = (path) => `${API_BASE}${path}`;
 
 const AppointmentContext = createContext();
