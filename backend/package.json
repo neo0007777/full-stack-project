@@ -1,7 +1,11 @@
 {
-  "name": "untitled-folder-5",
+  "name": "medical-appointment-backend",
   "version": "1.0.0",
-  "description": "",
+  "private": true,
+  "description": "Backend for Medical Appointment System",
+  "engines": {
+    "node": ">=18.0.0"
+  },
   "main": "server.js",
   "scripts": {
     "dev": "nodemon server.js",
