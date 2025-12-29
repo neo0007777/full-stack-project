@@ -556,8 +556,25 @@ app.get("/api/debug/users", async (req, res) => {
 // =======================
 const startServer = async () => {
   await connectDB();
-  app.listen(PORT, () => {
-    console.log(`✅ Server running on http://localhost:${PORT}`);
+  app.listen(PORT, "0.0.0.0", () => {
+    const os = require("os");
+    const interfaces = os.networkInterfaces();
+    let localIp = "localhost";
+
+    // Find the first non-internal IPv4 address
+    for (const name of Object.keys(interfaces)) {
+      for (const iface of interfaces[name]) {
+        if (iface.family === "IPv4" && !iface.internal) {
+          localIp = iface.address;
+          break;
+        }
+      }
+      if (localIp !== "localhost") break;
+    }
+
+    console.log(`✅ Server running on:`);
+    console.log(`   - Local:    http://localhost:${PORT}`);
+    console.log(`   - Network:  http://${localIp}:${PORT}`);
   });
 };
 
