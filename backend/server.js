@@ -12,11 +12,13 @@ const JWT_SECRET = process.env.JWT_SECRET || "dev-secret-change-in-production";
 // =======================
 // ✅ CORS CONFIGURATION
 // =======================
-app.use(cors({
-  origin: "*", // allow all during dev
-  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-  allowedHeaders: ["Content-Type", "Authorization"]
-}));
+app.use(cors()); // Allow all origins by default for debugging
+
+// Middleware to log all requests
+app.use((req, res, next) => {
+  console.log(`📨 ${req.method} ${req.url}`);
+  next();
+});
 
 app.use(express.json());
 
