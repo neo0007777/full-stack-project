@@ -13,6 +13,7 @@ const Login = () => {
   const handleLogin = async (e) => {
     e.preventDefault();
     setError('');
+    console.log(`Attempting login to: ${API_URL}/api/auth/login`);
 
     try {
       const response = await fetch(`${API_URL}/api/auth/login`, {
@@ -38,7 +39,12 @@ const Login = () => {
         setError(data.message || 'Login failed');
       }
     } catch (err) {
-      setError('Something went wrong. Please try again.');
+      console.error("Login Error:", err);
+      if (err.name === 'TypeError' && err.message === 'Failed to fetch') {
+        setError(`Unable to connect to server at ${API_URL}. Please check your internet connection or server status.`);
+      } else {
+        setError('Something went wrong. Please try again.');
+      }
     }
   };
 

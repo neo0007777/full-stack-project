@@ -21,6 +21,7 @@ const Signup = () => {
   const handleSignup = async (e) => {
     e.preventDefault();
     setError('');
+    console.log(`Attempting signup to: ${API_URL}/api/auth/signup`);
 
     try {
       const response = await fetch(`${API_URL}/api/auth/signup`, {
@@ -45,7 +46,12 @@ const Signup = () => {
         setError(data.message || 'Registration failed');
       }
     } catch (err) {
-      setError('Something went wrong. Please try again.');
+      console.error("Signup Error:", err);
+      if (err.name === 'TypeError' && err.message === 'Failed to fetch') {
+        setError(`Unable to connect to server at ${API_URL}. Please check your internet connection or server status.`);
+      } else {
+        setError('Something went wrong. Please try again.');
+      }
     }
   };
 
